@@ -46,7 +46,7 @@
 (define (load-texture filename)
   (let ((data width height channels
           (with-input-from-file filename img:read-image))
-        (texture-id (gen-texture)))
+        (texture-id (glu:gen-texture)))
     (assert (= channels 3))
     (glu:with-texture gl:+texture-2d+ texture-id
       (gl:tex-parameteri gl:+texture-2d+
@@ -78,4 +78,33 @@
           (lp (+ i 3))))))
 
 (define (index->pos i width channels)
-  (quotient&remainder (/ i channels) width))
+  (let ((y x (quotient&remainder (/ i channels) width)))
+    (values x y)))
+
+(define (image-ref data pt)
+  (let* ((x (inexact->exact (round (glm:point-x pt))))
+         (y (inexact->exact (round (glm:point-y pt))))
+         (i (* (+ (* y 1920) x) 3)))
+    (subu8vector data i (+ i 3))))
+
+(define (world->view pt)
+  (let ((x (glm:point-x pt))
+        (y (glm:point-y pt)))
+    (glm:make-point (- (/ x 960.) 1) (- (- (/ y 540.) 1)) 0)))
+
+(define (view->world pt)
+  (let ((x (glm:point-x pt))
+        (y (glm:point-y pt)))
+    (glm:make-point (round (* (+ x 1) 960.))
+                    (round (* (+ (- y) 1) 540.))
+                    0)))
+
+(define (ray-cast origin increment max-magnitude pixel-searched)
+  (let lp ((pt origin))
+    (cond ((> (glm:vector-magnitude (glm:v- pt origin)) max-magnitude)
+           #f)
+          ((equal? (image-ref *collision-map* pt)
+                   pixel-searched)
+           (glm:v- pt increment))
+          (else
+            (lp (glm:v+ pt increment))))))

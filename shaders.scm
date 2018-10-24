@@ -1,3 +1,6 @@
+;; Vertex shaders
+;; ==============
+
 (define simple-vshader-src #<<EOF
 precision highp float;
 
@@ -8,10 +11,10 @@ varying vec4 theCoord;
 varying vec2 theTexcoord;
 
 uniform vec2 resolution;
+uniform float scale;
 uniform vec3 translation;
 
 void main() {
-    float scale = 50.0;
     mat3 mat;
     mat[0] = vec3(scale/resolution.x, 0.0, 0.0);
     mat[1] = vec3(0.0, scale/resolution.y, 0.0);
@@ -23,6 +26,10 @@ void main() {
 }
 EOF
 )
+
+
+;; Fragment shaders
+;; ================
 
 (define target-fshader-src #<<EOF
 precision highp float;
@@ -55,18 +62,20 @@ EOF
 
 (define quad-fshader-src #<<EOF
 precision highp float;
+  
+uniform sampler2D theTexture;
 
-uniform float time;
-uniform vec2 resolution;
-uniform vec2 joystick;
-
-varying vec4 theCoord;
+varying vec2 theTexcoord;
 
 void main() {
-  gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
+  gl_FragColor = texture2D(theTexture, theTexcoord);
 }
 EOF
 )
+
+
+;; Programs
+;; ========
 
 (define simple-vshader (glu:make-shader gl:+vertex-shader+ simple-vshader-src))
 

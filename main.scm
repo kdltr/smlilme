@@ -79,6 +79,7 @@
 (include-relative "rendering.scm")
 
 (prepare)
+
 (define game-thread (thread-start! main))
 
 (cond-expand ((or chicken-script compiling) (thread-join! game-thread))
