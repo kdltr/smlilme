@@ -101,7 +101,8 @@
 
 (define (ray-cast origin increment max-magnitude pixel-searched)
   (let lp ((pt origin))
-    (cond ((> (glm:vector-magnitude (glm:v- pt origin)) max-magnitude)
+    (cond ((or (zero? max-magnitude)
+               (> (glm:vector-magnitude (glm:v- pt origin)) max-magnitude))
            #f)
           ((equal? (image-ref *collision-map* pt)
                    pixel-searched)
