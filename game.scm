@@ -47,16 +47,25 @@
   (let* ((axes (get-joystick-axes 0))
          (buts (get-joystick-buttons 0))
          (joy-v (joy-improve (vector-ref axes 0)
-                             (- (vector-ref axes 1)))))
-    
+                             (- (vector-ref axes 1))))
+         (current-pixel (image-ref *collision-map* (view->world *translation*))))
+
     (set! *joystick* joy-v)
-    
+
     (when (= 1 (vector-ref buts 0))
       (let* ((new-translation (glm:v+ *translation*
                                       (glm:v+ (glm:v- *target* *translation*)
-                                              (glm:v* joy-v (fp/ 1. 25.))))) ;; TODO target radius
+                                              (glm:v* joy-v
+                                                      (if (equal? current-pixel water-zone-pixel)
+                                                          0.0
+                                                          (fp/ 1. 25.)))))) ;; TODO target radius
+
+             (new-pixel (image-ref *collision-map* (view->world new-translation)))
              (new-target (glm:v+ new-translation
-                                 (glm:v- new-translation *translation*))))
+                                 (glm:v* (glm:v- new-translation *translation*)
+                                         (if (equal? new-pixel grass-zone-pixel)
+                                             0.33
+                                             1)))))
         (set! update (make-update-motion new-translation new-target))))))
 
 
