@@ -71,6 +71,8 @@
          (current-pixel (image-ref *collision-map* (view->world *translation*))))
 
     (set! *joystick* joy-v)
+    (when (equal? current-pixel item-trigger-pixel)
+      (set! *item-following* #t))
 
     (when (= 1 (vector-ref buts 0))
       (let* ((new-translation (glm:v+ *translation*
@@ -91,25 +93,30 @@
 
 (define (make-update-motion new-translation new-target)
   (let* ((t0 *t*)
-        (orig (view->world *translation*))
-        (dest (view->world new-translation))
-        (increment (glm:v- dest orig))
-        (mag (glm:vector-magnitude increment))
-        (_ (glm:normalize! increment))
-        (cast (ray-cast orig increment mag wall-zone-pixel))
-        (new-translation (if cast (world->view cast) new-translation))
-        (new-target (if cast (world->view cast) new-target))
-        (easing (if cast bounce-ease quadratic-ease))
-        (prev-translation *translation*)
-        (prev-target *target*))
+         (orig (view->world *translation*))
+         (dest (view->world new-translation))
+         (increment (glm:v- dest orig))
+         (mag (glm:vector-magnitude increment))
+         (_ (glm:normalize! increment))
+         (cast (ray-cast orig increment mag wall-zone-pixel))
+         (new-translation (if cast (world->view cast) new-translation))
+         (new-target (if cast (world->view cast) new-target))
+         (easing (if cast bounce-ease quadratic-ease))
+         (prev-translation *translation*)
+         (prev-target *target*)
+         (prev-item *item-position*))
     (lambda ()
       (let ((lerp-factor (/ (- *t* t0) tween-duration)))
         (cond ((<= lerp-factor 1.0)
                (set! *translation* (glm:lerp prev-translation new-translation
-                                             (tween easing 'out 0. 1. lerp-factor))))
+                                             (tween easing 'out 0. 1. lerp-factor)))
+               (when *item-following*
+                 (set! *item-position* (glm:lerp prev-item prev-translation
+                                                 (tween quadratic-ease 'out 0. 1. lerp-factor)))))
               (else
                 (set! *translation* new-translation)
                 (set! *target* new-target)
+                (when *item-following* (set! *item-position* prev-translation))
                 (set! update update-idle)))))))
 
 
