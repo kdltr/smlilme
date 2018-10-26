@@ -70,13 +70,14 @@
         (cast (ray-cast orig increment mag wall-zone-pixel))
         (new-translation (if cast (world->view cast) new-translation))
         (new-target (if cast (world->view cast) new-target))
+        (easing (if cast bounce-ease quadratic-ease))
         (prev-translation *translation*)
         (prev-target *target*))
     (lambda ()
       (let ((lerp-factor (/ (- *t* t0) tween-duration)))
         (cond ((<= lerp-factor 1.0)
                (set! *translation* (glm:lerp prev-translation new-translation
-                                             (tween quadratic-ease 'out 0. 1. lerp-factor))))
+                                             (tween easing 'out 0. 1. lerp-factor))))
               (else
                 (set! *translation* new-translation)
                 (set! *target* new-target)
