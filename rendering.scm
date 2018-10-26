@@ -1,9 +1,7 @@
 ;; Textures
 ;; ========
 
-(define background-texture
-  (load-texture "resources/gras_fik/lvl1.png"))
-
+(define *player-texture* (load-texture (make-pathname '("resources" "gras_fik") "player.png")))
 
 (define (render)
   (gl:bind-buffer gl:+array-buffer+ (glu:mesh-vertex-buffer +mesh+))
@@ -27,7 +25,7 @@
   (gl:viewport 0 0 1920 1080)
   
   ;; Background
-  (glu:with-texture gl:+texture-2d+ background-texture
+  (glu:with-texture gl:+texture-2d+ *background-texture*
     (gl:use-program quad-program)
     (gl:uniform2f (gl:get-uniform-location quad-program "resolution")
                   1.0 1.0)
@@ -38,14 +36,15 @@
     (draw!))
   
   ;; Character
-  (gl:use-program quad-program)
-  (gl:uniform2f (gl:get-uniform-location quad-program "resolution")
-                1920. 1080.)
-  (gl:uniform1f (gl:get-uniform-location quad-program "scale")
-                50.)
-  (gl:uniform3fv (gl:get-uniform-location quad-program "translation")
-                 1 *translation*)
-  (draw!)
+  (glu:with-texture gl:+texture-2d+ *player-texture*
+    (gl:use-program quad-program)
+    (gl:uniform2f (gl:get-uniform-location quad-program "resolution")
+                  1920. 1080.)
+    (gl:uniform1f (gl:get-uniform-location quad-program "scale")
+                  50.)
+    (gl:uniform3fv (gl:get-uniform-location quad-program "translation")
+                   1 *translation*)
+    (draw!))
   
   ;; Target
   (gl:use-program target-program)

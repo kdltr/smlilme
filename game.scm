@@ -17,7 +17,11 @@
 ;; State Variables
 ;; ===============
 
-(define *level* "lvl1")
+(define *level* 1)
+
+(define *background-texture* 0)
+(define *item-texture* 0)
+(define *npc-texture* 0)
 
 (define *translation* (glm:make-point 0 0 0))
 (define *target* (glm:make-point 0 0 0))
@@ -29,9 +33,9 @@
 ;; =============
 
 (define (update-startup)
-  (let ((data width height channels
-         (with-input-from-file (string-append "resources/gras_fik/" *level* "_collision.png")
-           img:read-image)))
+  (let* ((data width height channels
+           (with-input-from-file (resource-path *level* "collision.png")
+             img:read-image)))
     (assert (= width 1920))
     (assert (= height 1080))
     (assert (= channels 3))
@@ -41,6 +45,7 @@
            (pt (world->view (glm:make-point x y 0))))
       (set! *translation* pt)
       (set! *target* pt))
+    (set! *background-texture* (load-texture (resource-path *level* "background.png")))
     (set! update update-idle)))
 
 (define (update-idle)

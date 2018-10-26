@@ -44,10 +44,11 @@
 
 
 (define (load-texture filename)
-  (let ((data width height channels
-          (with-input-from-file filename img:read-image))
-        (texture-id (glu:gen-texture)))
-    (assert (= channels 3))
+  (let* ((data width height channels
+           (with-input-from-file filename img:read-image))
+         (texture-id (glu:gen-texture))
+         (format (case channels ((3) gl:+rgb+) ((4) gl:+rgba+))))
+    (assert (or (= channels 3) (= channels 4)))
     (glu:with-texture gl:+texture-2d+ texture-id
       (gl:tex-parameteri gl:+texture-2d+
                          gl:+texture-wrap-s+ gl:+clamp-to-edge+)
@@ -60,11 +61,11 @@
                          
       (gl:tex-image-2d gl:+texture-2d+
                        0
-                       gl:+rgb+
+                       format
                        width
                        height
                        0
-                       gl:+rgb+
+                       format
                        gl:+unsigned-byte+
                        (glu:->pointer data))
       (gl:generate-mipmap gl:+texture-2d+))
@@ -109,3 +110,6 @@
            (glm:v- pt increment))
           (else
             (lp (glm:v+ pt increment))))))
+
+(define (resource-path level resource)
+  (make-pathname (list "resources" "gras_fik" (string-append "level" (number->string level))) resource))
