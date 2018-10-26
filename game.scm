@@ -25,6 +25,7 @@
 
 (define *item-following* #f)
 
+(define *item-initial-position* (glm:make-point 0 0 0))
 (define *item-position* (glm:make-point 0 0 0))
 (define *npc-position* (glm:make-point 0 0 0))
 
@@ -53,6 +54,7 @@
     (let* ((i (find-pixel-index data item-position-pixel))
            (x y (index->pos i width channels))
            (pt (world->view (glm:make-point x y 0))))
+      (set! *item-initial-position* pt)
       (set! *item-position* pt))
     (let* ((i (find-pixel-index data npc-position-pixel))
            (x y (index->pos i width channels))
@@ -71,8 +73,6 @@
          (current-pixel (image-ref *collision-map* (view->world *translation*))))
 
     (set! *joystick* joy-v)
-    (when (equal? current-pixel item-trigger-pixel)
-      (set! *item-following* #t))
 
     (when (= 1 (vector-ref buts 0))
       (let* ((new-translation (glm:v+ *translation*
@@ -117,7 +117,17 @@
                 (set! *translation* new-translation)
                 (set! *target* new-target)
                 (when *item-following* (set! *item-position* prev-translation))
-                (set! update update-idle)))))))
+                (when cast
+                  (set! *item-position* *item-initial-position*)
+                  (set! *item-following* #f))
+                (set! update update-idle)))
+
+        (let ((current-pixel (image-ref *collision-map* (view->world *translation*))))
+          (when (and *item-following* (equal? current-pixel npc-trigger-pixel))
+            (set! update void)) ;; level end
+          (when (equal? current-pixel item-trigger-pixel)
+            (set! *item-following* #t)))
+        ))))
 
 
 ;; initial state
