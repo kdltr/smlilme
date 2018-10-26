@@ -55,7 +55,7 @@ void main() {
     float small = circle((pt - joystick) * 5.0);
 
     vec3 color = (big - small) * vec3(0.7, 0.8, 0.9) + small * vec3(.5, .2, .2);
-    gl_FragColor = vec4(color, big);
+    gl_FragColor = vec4(color, big * 0.5);
 }
 EOF
 )

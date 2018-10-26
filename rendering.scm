@@ -41,9 +41,27 @@
     (gl:uniform2f (gl:get-uniform-location quad-program "resolution")
                   1920. 1080.)
     (gl:uniform1f (gl:get-uniform-location quad-program "scale")
-                  50.)
+                  113.)
     (gl:uniform3fv (gl:get-uniform-location quad-program "translation")
                    1 *translation*)
+    (draw!))
+  
+  ;; Item
+  (glu:with-texture gl:+texture-2d+ *item-texture*
+    (gl:use-program quad-program)
+    (gl:uniform1f (gl:get-uniform-location quad-program "scale")
+                  113.)
+    (gl:uniform3fv (gl:get-uniform-location quad-program "translation")
+                   1 *item-position*)
+    (draw!))
+  
+  ;; NPC
+  (glu:with-texture gl:+texture-2d+ *npc-texture*
+    (gl:use-program quad-program)
+    (gl:uniform1f (gl:get-uniform-location quad-program "scale")
+                  113.)
+    (gl:uniform3fv (gl:get-uniform-location quad-program "translation")
+                   1 *npc-position*)
     (draw!))
   
   ;; Target

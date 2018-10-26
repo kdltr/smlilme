@@ -2,13 +2,13 @@
 ;; =========
 
 (define starting-position-pixel #u8(255 0 0))
-(define object-position-pixel #u8(0 255 0))
+(define item-position-pixel #u8(0 255 0))
 (define npc-position-pixel #u8(0 0 255))
 
 (define wall-zone-pixel #u8(0 0 0))
 (define grass-zone-pixel #u8(255 0 255))
 (define water-zone-pixel #u8(255 128 0))
-(define object-trigger-pixel #u8(0 255 255))
+(define item-trigger-pixel #u8(0 255 255))
 (define npc-trigger-pixel #u8(255 255 0))
 
 (define tween-duration 1.0)
@@ -22,6 +22,11 @@
 (define *background-texture* 0)
 (define *item-texture* 0)
 (define *npc-texture* 0)
+
+(define *item-following* #f)
+
+(define *item-position* (glm:make-point 0 0 0))
+(define *npc-position* (glm:make-point 0 0 0))
 
 (define *translation* (glm:make-point 0 0 0))
 (define *target* (glm:make-point 0 0 0))
@@ -45,7 +50,17 @@
            (pt (world->view (glm:make-point x y 0))))
       (set! *translation* pt)
       (set! *target* pt))
+    (let* ((i (find-pixel-index data item-position-pixel))
+           (x y (index->pos i width channels))
+           (pt (world->view (glm:make-point x y 0))))
+      (set! *item-position* pt))
+    (let* ((i (find-pixel-index data npc-position-pixel))
+           (x y (index->pos i width channels))
+           (pt (world->view (glm:make-point x y 0))))
+      (set! *npc-position* pt))
     (set! *background-texture* (load-texture (resource-path *level* "background.png")))
+    (set! *item-texture* (load-texture (resource-path *level* "item.png")))
+    (set! *npc-texture* (load-texture (resource-path *level* "npc.png")))
     (set! update update-idle)))
 
 (define (update-idle)
