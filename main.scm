@@ -32,11 +32,16 @@
 (define *t* 0)
 (define *window*)
 
+(define *window-width* 640)
+(define *window-height* 480)
+
 (define (init)
   (ino:init!)
   (on-exit ino:clean-up!)
   (glfw:init)
-  (glfw:make-window 640 480 "Autumn 2018 Lisp Jam"
+  (glfw:make-window *window-width*
+                    *window-height*
+                    "Autumn 2018 Lisp Jam"
                     client-api: glfw:+opengl-es-api+
                     context-version-major: 2
                     context-version-minor: 0
@@ -54,8 +59,6 @@
     (set! *t* now)
     (set! *dt* dt)
     (update)
-    (gl:clear-color 0.5 0.5 0.5 1.0)
-    (gl:clear gl:+color-buffer-bit+)
     (render)
     (glfw:swap-buffers *window*)
     (glfw:poll-events)
@@ -65,9 +68,12 @@
 
 (define (update) (void))
 (define (render) (void))
-(define (resize . _) (void))
-(define (prepare) (void))
-(glfw:framebuffer-size-callback (lambda (win w h) (resize win w h)))
+
+(define (resize window width height)
+  (set! *window-width* width)
+  (set! *window-height* height))
+
+(glfw:framebuffer-size-callback resize)
 
 
 (init)
@@ -78,8 +84,6 @@
 (include-relative "game.scm")
 (include-relative "rendering.scm")
 
-(prepare)
-
 (define game-thread (thread-start! main))
 
 (cond-expand ((or chicken-script compiling) (thread-join! game-thread))
@@ -89,7 +93,7 @@
 (when (eqv? 'terminated (thread-state game-thread))
   (set! game-thread (thread-start! main)))
 
-(define (resize window width height)
+#;(define (resize window width height)
   (let ((width 1920)
         (height 1080))
   (gl:viewport 0 0 width height)

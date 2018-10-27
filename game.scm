@@ -17,7 +17,12 @@
 ;; State Variables
 ;; ===============
 
-(define *level* 1)
+(define *level*
+  (cond-expand ((or script compiling)
+                (if (pair? (command-line-arguments))
+                    (string->number (car (command-line-arguments)))
+                    1))
+                (else 2)))
 
 (define *background-texture* 0)
 (define *item-texture* 0)
@@ -80,7 +85,7 @@
                                               (glm:v* joy-v
                                                       (if (equal? current-pixel water-zone-pixel)
                                                           0.0
-                                                          (fp/ 1. 25.)))))) ;; TODO target radius
+                                                          (fp/ 1. 50.)))))) ;; TODO target radius
 
              (new-pixel (image-ref *collision-map* (view->world new-translation)))
              (new-target (glm:v+ new-translation
