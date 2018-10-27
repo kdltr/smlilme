@@ -129,10 +129,16 @@
 
         (let ((current-pixel (image-ref *collision-map* (view->world *translation*))))
           (when (and *item-following* (equal? current-pixel npc-trigger-pixel))
-            (set! update void)) ;; level end
+            (set! update update-level-end)) ;; level end
           (when (equal? current-pixel item-trigger-pixel)
             (set! *item-following* #t)))
         ))))
+
+(define (update-level-end)
+  ;; animation + music trigger
+  (set! *level* (add1 *level*))
+  (set! *item-following* #f)
+  (set! update update-startup))
 
 
 ;; initial state

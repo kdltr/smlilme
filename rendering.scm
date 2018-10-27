@@ -1,6 +1,5 @@
 ;; Offscreen rendering
 
-(define *clear-color* '(0.914 0.749 0.757 1.0))
 (define *framebuffer* (glu:gen-framebuffer))
 (define *rendering-texture* (glu:gen-texture))
 
@@ -54,10 +53,11 @@
                  (round (/ (- *window-height* height) 2))
                  width height))
   
-  (apply gl:clear-color *clear-color*)
+  (gl:clear-color 0 0 0 1.0)
   (gl:clear gl:+color-buffer-bit+)
   (glu:with-texture gl:+texture-2d+ *rendering-texture*
     (gl:use-program quad-program)
+    (gl:uniform1f (gl:get-uniform-location quad-program "flip") -1.0)
     (gl:uniform2f (gl:get-uniform-location quad-program "resolution")
                   1.0 1.0)
     (gl:uniform1f (gl:get-uniform-location quad-program "scale")
@@ -71,6 +71,7 @@
   ;; Background
   (glu:with-texture gl:+texture-2d+ *background-texture*
     (gl:use-program quad-program)
+    (gl:uniform1f (gl:get-uniform-location quad-program "flip") 1.0)
     (gl:uniform2f (gl:get-uniform-location quad-program "resolution")
                   1.0 1.0)
     (gl:uniform1f (gl:get-uniform-location quad-program "scale")

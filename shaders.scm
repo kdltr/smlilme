@@ -64,11 +64,13 @@ EOF
 precision highp float;
   
 uniform sampler2D theTexture;
+uniform float flip;
 
 varying vec2 theTexcoord;
 
 void main() {
-  gl_FragColor = texture2D(theTexture, theTexcoord);
+  vec2 coord = vec2(theTexcoord.x, flip * theTexcoord.y);
+  gl_FragColor = texture2D(theTexture, coord);
 }
 EOF
 )
