@@ -92,7 +92,7 @@
              (new-target (glm:v+ new-translation
                                  (glm:v* (glm:v- new-translation *translation*)
                                          (if (equal? new-pixel grass-zone-pixel)
-                                             0.33
+                                             0.5
                                              1)))))
         (set! update (make-update-motion new-translation new-target))))))
 
