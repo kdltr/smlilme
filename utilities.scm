@@ -113,3 +113,9 @@
 
 (define (resource-path level resource)
   (make-pathname (list "resources" "gras_fik" (string-append "level" (number->string level))) resource))
+
+(define (file->blob filename)
+  (let* ((size (file-size filename)) (buf (make-u8vector size 0 #t #f)))
+    (with-input-from-file
+      filename
+      (lambda () (read-u8vector! size buf) (u8vector->blob/shared buf)))))

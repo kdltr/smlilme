@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <string.h>
 #include <portaudio.h>
-#include <pa_jack.h>
 #include <opusfile.h>
 
 typedef enum {
@@ -24,10 +23,13 @@ static PaStream* paStream;
 static int
 read_channel(channel_t chan, float* dest, unsigned long frameCount) {
     int ret = 1;
-    while (frameCount > 0 && ret > 0) {
+    while (frameCount > 0) {
         ret = op_read_float_stereo(chan.stream, dest, frameCount*2);
         frameCount -= ret;
         dest += ret * 2;
+        if (ret == 0) {
+            op_pcm_seek(chan.stream, 0);
+        }
     }
     return ret;
 }
@@ -62,12 +64,7 @@ myCallback(const void* input, void* output, unsigned long frameCount, const PaSt
         }
     }
 
-    if (ret == 0)
-        return paComplete;
-    else if (ret < 0)
-        return paAbort;
-    else
-        return paContinue;
+    return paContinue;
 }
 
 static void
@@ -84,25 +81,11 @@ enumerate() {
 
 static int
 startup() {
-    PaJack_SetClientName("CHICKEN Scheme");
     Pa_Initialize();
-    enumerate();
+    // enumerate();
 
-    PaStreamParameters outputParameters;
-
-    outputParameters.channelCount = 2;
-    outputParameters.device = 6;
-    outputParameters.hostApiSpecificStreamInfo = NULL;
-    outputParameters.sampleFormat = paFloat32;
-    outputParameters.suggestedLatency = Pa_GetDeviceInfo(6)->defaultLowOutputLatency;
-    
-#if 0
-    PaError err = Pa_OpenStream(&paStream, NULL, &outputParameters, 48000, paFramesPerBufferUnspecified, paNoFlag, myCallback, channels);
-#endif
-
-#if 1
     Pa_OpenDefaultStream(&paStream, 0, 2, paFloat32, 48000, paFramesPerBufferUnspecified, myCallback, channels);
-#endif
+
     Pa_StartStream(paStream);
 }
 

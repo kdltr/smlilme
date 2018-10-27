@@ -22,7 +22,7 @@
                 (if (pair? (command-line-arguments))
                     (string->number (car (command-line-arguments)))
                     1))
-                (else 2)))
+                (else 1)))
 
 (define *background-texture* 0)
 (define *item-texture* 0)
@@ -68,6 +68,7 @@
     (set! *background-texture* (load-texture (resource-path *level* "background.png")))
     (set! *item-texture* (load-texture (resource-path *level* "item.png")))
     (set! *npc-texture* (load-texture (resource-path *level* "npc.png")))
+    (snd:set-channel-volume! (sub1 *level*) 1.0)
     (set! update update-idle)))
 
 (define (update-idle)

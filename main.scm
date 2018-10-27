@@ -13,18 +13,20 @@
   (chicken sort)
   (chicken file posix)
   (chicken condition)
-  (prefix inotify #:ino)
   (prefix opengl-glew #:gl)
   (prefix glfw3 #:glfw)
   (prefix gl-math #:glm)
   (prefix gl-utils-core #:glu)
   (prefix gl-utils-mesh #:glu)
   (prefix stb-image #:img)
+  (prefix sound #:snd)
   tween
   srfi-1
   srfi-4
   srfi-18
   srfi-71)
+
+(include-relative "utilities.scm")
 
 (cond-expand (csi (import live-define)) (else))
 
@@ -36,8 +38,8 @@
 (define *window-height* 480)
 
 (define (init)
-  (ino:init!)
-  (on-exit ino:clean-up!)
+  (snd:startup)
+  (on-exit snd:shutdown)
   (glfw:init)
   (glfw:make-window *window-width*
                     *window-height*
@@ -75,10 +77,28 @@
 
 (glfw:framebuffer-size-callback resize)
 
+(define *audio-1-data* (file->blob (make-pathname '("resources" "music") "track1.opus")))
+(define *audio-2-data* (file->blob (make-pathname '("resources" "music") "track2.opus")))
+(define *audio-3-data* (file->blob (make-pathname '("resources" "music") "track3.opus")))
+
+(define *audio-1-stream* (snd:op_open_memory *audio-1-data*))
+(define *audio-2-stream* (snd:op_open_memory *audio-2-data*))
+(define *audio-3-stream* (snd:op_open_memory *audio-3-data*))
+
+(snd:set-channel-stream! 0 *audio-1-stream*)
+(snd:set-channel-stream! 1 *audio-2-stream*)
+(snd:set-channel-stream! 2 *audio-3-stream*)
+
+(snd:set-channel-volume! 0 0.0)
+(snd:set-channel-volume! 1 0.0)
+(snd:set-channel-volume! 2 0.0)
+
+(snd:set-channel-state! 0 snd:+playing+)
+(snd:set-channel-state! 1 snd:+playing+)
+(snd:set-channel-state! 2 snd:+playing+)
 
 (init)
 
-(include-relative "utilities.scm")
 (include-relative "shaders.scm")
 (include-relative "mesh.scm")
 (include-relative "game.scm")
