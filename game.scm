@@ -142,7 +142,7 @@
              (snd:set-channel-volume! *level* 1.0)
              (set! *level* (add1 *level*))
              (set! *item-following* #f)
-             (if (> *level* 3)
+             (if (> *level* 4)
                  (set! update void) ;; TODO end game
                  (set! update update-startup)))
             (else
