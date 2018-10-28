@@ -17,13 +17,7 @@
 ;; State Variables
 ;; ===============
 
-(define *level*
-  (cond-expand ((or script compiling)
-                (if (pair? (command-line-arguments))
-                    (string->number (car (command-line-arguments)))
-                    1))
-                (else 1)))
-
+(define *level* 1)
 (define *background-texture* 0)
 (define *item-texture* 0)
 (define *npc-texture* 0)
@@ -130,17 +124,32 @@
 
         (let ((current-pixel (image-ref *collision-map* (view->world *translation*))))
           (when (and *item-following* (equal? current-pixel npc-trigger-pixel))
-            (set! update update-level-end)) ;; level end
+            (set! update (make-update-level-end))) ;; level end
           (when (equal? current-pixel item-trigger-pixel)
             (set! *item-following* #t)))
         ))))
 
-(define (update-level-end)
-  ;; animation + music trigger
-  (set! *level* (add1 *level*))
-  (set! *item-following* #f)
-  (set! update update-startup))
 
+(define anim-duration 5.0)
+
+(define (make-update-level-end)
+  (let* ((anim-start-t *t*)
+         (initial-item-position *item-position*)
+         (anim-end-t (+ anim-start-t anim-duration)))
+    (lambda ()
+      (cond ((> *t* anim-end-t)
+             (set! *item-position* *npc-position*)
+             (snd:set-channel-volume! *level* 1.0)
+             (set! *level* (add1 *level*))
+             (set! *item-following* #f)
+             (if (> *level* 3)
+                 (set! update void) ;; TODO end game
+                 (set! update update-startup)))
+            (else
+              (let ((lerp-factor (/ (- *t* anim-start-t) anim-duration)))
+                (snd:set-channel-volume! *level* lerp-factor)
+                (set! *item-position*
+                  (glm:lerp initial-item-position *npc-position* lerp-factor))))))))
 
 ;; initial state
 (set! update update-startup)
