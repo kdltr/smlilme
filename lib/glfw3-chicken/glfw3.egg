@@ -1,0 +1,15 @@
+((version "0.7.0")
+ (synopsis "Bindings to the GLFW3 OpenGL window and event management library")
+ (author "Alex Charlton")
+ (category graphics)
+ (license "BSD")
+ (dependencies bind)
+ (foreign-dependencies "glfw")
+ (components
+   (extension glfw3-bindings
+     (csc-options "-Dgles" "-C" "-DGLFW_INCLUDE_ES3")
+     (link-options "-L" "-lglfw"))
+   (extension glfw3
+     (csc-options "-Dgles" "-C" "-DGLFW_INCLUDE_ES3")
+     (component-dependencies glfw3-bindings)
+     (link-options "-L" "-lglfw"))))

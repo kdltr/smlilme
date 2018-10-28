@@ -1,0 +1,15 @@
+((version "0.11.0")
+ (synopsis "Bindings to OpenGL core profile with extension loading with GLEW")
+ (author "Alex Charlton")
+ (category graphics)
+ (license "BSD")
+ (dependencies bind)
+ (foreign-dependencies "OpenGL" "GLEW")
+ (components
+   (generated-source-file gl.h
+     (custom-build "generate-header"))
+   (extension opengl-glew
+     (component-dependencies gl.h)
+     (types-file)
+     (csc-options "-Dgles")
+     (link-options "-L" "-lGLESv2"))))

@@ -1,0 +1,25 @@
+;; glfw3.setup -*- scheme -*-
+
+
+(define compile-options
+  (cond-expand
+    ((or arm gles) "-O2 -d0 -Dgles -C -DGLFW_INCLUDE_ES3")
+    (else "-O2 -d0")))
+
+(define link-options
+  (cond-expand
+    ((and unix (not macosx)) (car (with-input-from-pipe "pkg-config glfw3 --libs" read-lines)))
+    (macosx "-lglfw -framework Cocoa -framework OpenGL -framework IOKit -framework CoreVideo")
+    (windows "-lglfw -lopengl32 -lgdi32")
+    (else "-lglfw")))
+
+(compile ,compile-options ,link-options -J -s glfw3-bindings.scm)
+(compile ,compile-options -s glfw3-bindings.import.scm)
+
+(compile ,compile-options ,link-options -J -s glfw3.scm)
+(compile ,compile-options -s glfw3.import.scm)
+
+(install-extension
+ 'glfw3
+ '("glfw3.so" "glfw3.import.so" "glfw3-bindings.so" "glfw3-bindings.import.so")
+ '((version "0.6.3")))

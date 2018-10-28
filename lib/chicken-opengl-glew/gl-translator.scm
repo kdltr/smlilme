@@ -1,0 +1,51 @@
+(import scheme
+        (chicken base)
+        (chicken io)
+        (chicken irregex)
+        srfi-13)
+
+(define *replacements*
+  `(((: "/*" (*? any) "*/") . "")
+    ("GLAPI " . "")
+    ("#if.*\n" . "")
+    ("#ifndef.*\n" . "")
+    ("#elif.*\n" . "")
+    ("#else\n" . "")
+    ("#endif.*\n" . "")
+    ("extern.*\n" . "")
+    ("ptrdiff_t" . ,(cond-expand
+                      (x86-64 "int64_t")
+                      (else "int32_t")))
+    ("GL_APIENTRY " . "")
+    ("GL_APICALL " . "")
+    ("APIENTRYP " . "*")
+    ("APIENTRY " . "")
+    ("\n}\n" . "")
+    ("#include.*\n" . "")
+    ("#define GL_VERSION_.*\n" . "")
+    ("#define GL_ES_VERSION.*\n" . "")
+    ("#define [^G].*\n" . "")
+    ((: "*const*") . "**")
+    ((: newline (*? (or alpha numeric ("()*") space)) "PFNGL" (*? any) eol) . "")
+    ("#endif .*\n" . "")
+    ("\n\n" . "\n")
+    ("typedef long int int64_t;\ntypedef unsigned long int uint64_t;\ntypedef long long int int64_t;\ntypedef unsigned long long int uint64_t;\ntypedef long int int32_t;\ntypedef long long int int64_t;\ntypedef unsigned long long int uint64_t;\ntypedef __int32 int32_t;\ntypedef __int64 int64_t;\ntypedef unsigned __int64 uint64_t;\ntypedef uint64_t GLuint64;\ntypedef int64_t GLint64;" .
+     "typedef uint64_t GLuint64;\ntypedef int64_t GLint64;")
+    ("khronos_ssize_t" . "signed int")
+    ("khronos_intptr_t" . "signed int")
+    ("khronos_float_t" . "float")
+    ("khronos_" . "")
+    ("typedef unsigned char GLboolean;" . "typedef bool GLboolean;" )))
+
+(define (gl-translate file)
+  (call-with-output-file "gl.h"
+    (lambda (output)
+      (call-with-input-file file
+        (lambda (input)
+          (let ([h (read-string #f input)])
+            (let loop ((str h) (replacements *replacements*))
+              (if (null? replacements)
+                  (write-string str #f output)
+                  (loop (irregex-replace/all (caar replacements) str
+                                             (cdar replacements))
+                        (cdr replacements))))))))))

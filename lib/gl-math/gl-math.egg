@@ -1,0 +1,9 @@
+((version "0.9.0")
+ (synopsis "A small gamedev-oriented math library")
+ (author "Alex Charlton")
+ (category math)
+ (license "BSD")
+ (dependencies srfi-1 matchable)
+ (components
+   (extension gl-math
+     (csc-options "-C" "-Ihypermath/include"))))
