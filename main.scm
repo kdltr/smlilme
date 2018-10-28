@@ -4,6 +4,7 @@
   (chicken file)
   (chicken file posix)
   (chicken flonum)
+  (chicken format)
   (chicken io)
   (chicken irregex)
   (chicken memory)
@@ -103,7 +104,13 @@
 (include-relative "game.scm")
 (include-relative "rendering.scm")
 
-(define game-thread (thread-start! main))
+(define game-thread)
+
+(if (equal? #() (get-joystick-axes 0))
+    (begin
+      (fprintf (current-error-port) "No gamepad found! Aborting.~%")
+      (exit 1))
+    (set! game-thread (thread-start! main)))
 
 (cond-expand ((or chicken-script compiling) (thread-join! game-thread))
              (else))
