@@ -1,2 +1,0 @@
-((dependencies srfi-69 vector-lib)
- (components (extension scran)))
