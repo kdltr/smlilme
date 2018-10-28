@@ -1,0 +1,24 @@
+This game has four external dependencies: OpusFile, Portaudio, OpenGL ES 2 and GLFW3.
+These can be installed on debian-based systems with this command:
+
+    apt install libopusfile-dev portaudio19-dev libgles2-mesa-dev libglfw3-dev
+
+To build this game you also need CHICKEN 5, which can be downloaded here:
+https://code.call-cc.org/dev-snapshots/2018/10/08/chicken-5.0.0rc3.tar.gz
+
+untar it and build it with this command:
+(replace PLATFORM=linux with PLATFORM=bsd or PLATFORM=macosx depending on your actual platform)
+
+    make PLATFORM=linux PREFIX=/tmp/chicken-5-build install
+
+This will install CHICKEN 5 in /tmp/chicken-5-build, you then have to set your PATH so that it is found by the rest of the system:
+
+    export PATH=/tmp/chicken-5-build:$PATH
+
+Then you can build the game by running the build.sh script.
+
+    ./build.sh
+
+And run it:
+
+    ./main
