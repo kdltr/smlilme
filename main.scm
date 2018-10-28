@@ -34,8 +34,8 @@
 (define *t* 0)
 (define *window*)
 
-(define *window-width* 640)
-(define *window-height* 480)
+(define *window-width* 1280)
+(define *window-height* 720)
 
 (define (init)
   (snd:startup)
@@ -57,7 +57,6 @@
 (define (main)
   (let* ((now (glfw:get-time))
          (dt (- now *t*)))
-    (thread-sleep! 0.016)
     (set! *t* now)
     (set! *dt* dt)
     (update)
@@ -112,17 +111,3 @@
 #;
 (when (eqv? 'terminated (thread-state game-thread))
   (set! game-thread (thread-start! main)))
-
-#;(define (resize window width height)
-  (let ((width 1920)
-        (height 1080))
-  (gl:viewport 0 0 width height)
-  (gl:use-program target-program)
-  (gl:uniform2f (gl:get-uniform-location target-program
-                                         "resolution")
-                width height)
-  (gl:use-program quad-program)
-  (gl:uniform2f (gl:get-uniform-location quad-program
-                                         "resolution")
-                width height)))
-
