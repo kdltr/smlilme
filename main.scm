@@ -80,22 +80,27 @@
 (define *audio-1-data* (file->blob (make-pathname '("resources" "music") "track1.opus")))
 (define *audio-2-data* (file->blob (make-pathname '("resources" "music") "track2.opus")))
 (define *audio-3-data* (file->blob (make-pathname '("resources" "music") "track3.opus")))
+(define *audio-4-data* (file->blob (make-pathname '("resources" "music") "track4.opus")))
 
 (define *audio-1-stream* (snd:op_open_memory *audio-1-data*))
 (define *audio-2-stream* (snd:op_open_memory *audio-2-data*))
 (define *audio-3-stream* (snd:op_open_memory *audio-3-data*))
+(define *audio-4-stream* (snd:op_open_memory *audio-4-data*))
 
 (snd:set-channel-stream! 0 *audio-1-stream*)
 (snd:set-channel-stream! 1 *audio-2-stream*)
 (snd:set-channel-stream! 2 *audio-3-stream*)
+(snd:set-channel-stream! 3 *audio-4-stream*)
 
 (snd:set-channel-volume! 0 0.0)
 (snd:set-channel-volume! 1 0.0)
 (snd:set-channel-volume! 2 0.0)
+(snd:set-channel-volume! 3 0.0)
 
 (snd:set-channel-state! 0 snd:+playing+)
 (snd:set-channel-state! 1 snd:+playing+)
 (snd:set-channel-state! 2 snd:+playing+)
+(snd:set-channel-state! 3 snd:+playing+)
 
 (init)
 
