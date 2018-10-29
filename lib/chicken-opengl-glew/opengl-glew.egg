@@ -11,5 +11,5 @@
    (extension opengl-glew
      (component-dependencies gl.h)
      (types-file)
-     (csc-options "-Dgles")
-     (link-options "-L" "-lGLESv2"))))
+     #;(csc-options "-Dgles")
+     (link-options "-L" "-lGL -lGLEW"))))

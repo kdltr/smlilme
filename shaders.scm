@@ -2,6 +2,7 @@
 ;; ==============
 
 (define simple-vshader-src #<<EOF
+#version 100
 precision highp float;
 
 attribute vec4 position;
@@ -32,6 +33,7 @@ EOF
 ;; ================
 
 (define target-fshader-src #<<EOF
+#version 100
 precision highp float;
 
 uniform float time;
@@ -61,6 +63,7 @@ EOF
 )
 
 (define quad-fshader-src #<<EOF
+#version 100
 precision highp float;
   
 uniform sampler2D theTexture;

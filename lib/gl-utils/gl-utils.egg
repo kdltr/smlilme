@@ -13,12 +13,12 @@
                              gl-utils-ply gl-utils-mesh
                              gl-utils-bytevector))
    (extension gl-utils-core
-     (csc-options "-Dgles" "-C" "-DGLES")
-     (link-options "-L" "-lGLESv2"))
+     #;(csc-options "-Dgles" "-C" "-DGLES")
+     (link-options "-L" "-lGL"))
    #;(extension gl-utils-srfi-4)
    #;(extension gl-utils-ply
      (component-dependencies gl-utils-bytevector gl-utils-mesh))
    (extension gl-utils-bytevector)
    (extension gl-utils-mesh
-     (csc-options "-Dgles" "-C" "-DGLES")
+     #;(csc-options "-Dgles" "-C" "-DGLES")
      (component-dependencies gl-utils-core gl-utils-bytevector))))

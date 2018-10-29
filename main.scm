@@ -45,11 +45,12 @@
   (glfw:make-window *window-width*
                     *window-height*
                     "Autumn 2018 Lisp Jam"
-                    client-api: glfw:+opengl-es-api+
-                    context-version-major: 2
-                    context-version-minor: 0
+                    ;client-api: glfw:+opengl-core-profile+
+                    ;context-version-major: 3
+                    ;context-version-minor: 2
                     swap-interval: 0)
   (set! *window* (glfw:window))
+  (gl:init)
   (print "GLFW: " (glfw:get-version-string))
   (print "OpenGL: " (gl:get-string gl:+version+))
   (gl:enable gl:+blend+)

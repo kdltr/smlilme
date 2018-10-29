@@ -7,9 +7,9 @@
  (foreign-dependencies "glfw")
  (components
    (extension glfw3-bindings
-     (csc-options "-Dgles" "-C" "-DGLFW_INCLUDE_ES3")
+     #;(csc-options "-Dgles" "-C" "-DGLFW_INCLUDE_ES3")
      (link-options "-L" "-lglfw"))
    (extension glfw3
-     (csc-options "-Dgles" "-C" "-DGLFW_INCLUDE_ES3")
+     #;(csc-options "-Dgles" "-C" "-DGLFW_INCLUDE_ES3")
      (component-dependencies glfw3-bindings)
      (link-options "-L" "-lglfw"))))
