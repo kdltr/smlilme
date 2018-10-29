@@ -72,7 +72,9 @@
                              (- (vector-ref axes 1))))
          (current-pixel (image-ref *collision-map* (view->world *translation*))))
 
-    (set! *joystick* joy-v)
+    (if (equal? current-pixel water-zone-pixel)
+        (set! *joystick* (glm:make-point 0 0 0))
+        (set! *joystick* joy-v))
 
     (when (= 1 (vector-ref buts 0))
       (let* ((new-translation (glm:v+ *translation*
