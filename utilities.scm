@@ -23,7 +23,9 @@
                              1.0
                              (deadzone-func mag))))
          (v (glm:v* v better-mag)))
-    v))
+    (if (zero? mag)
+        (glm:make-point 0 0 0)
+        v)))
 
 (define (pointer->vector ptr len datum-size ref)
   (let* ((v (make-vector len)))
