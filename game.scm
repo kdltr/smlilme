@@ -40,7 +40,8 @@
 (define (update-startup)
   (let* ((data width height channels
            (with-input-from-file (resource-path *level* "collision.png")
-             img:read-image)))
+             img:read-image
+             #:binary)))
     (assert (= width 1920))
     (assert (= height 1080))
     (assert (= channels 3))
@@ -69,7 +70,7 @@
   (let* ((axes (get-joystick-axes 0))
          (buts (get-joystick-buttons 0))
          (joy-v (joy-improve (vector-ref axes 0)
-                             (- (vector-ref axes 1))))
+                             (vector-ref axes 1)))
          (current-pixel (image-ref *collision-map* (view->world *translation*))))
 
     (if (equal? current-pixel water-zone-pixel)

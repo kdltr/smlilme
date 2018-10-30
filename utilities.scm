@@ -47,7 +47,7 @@
 
 (define (load-texture filename)
   (let* ((data width height channels
-           (with-input-from-file filename img:read-image))
+           (with-input-from-file filename img:read-image #:binary))
          (texture-id (glu:gen-texture))
          (format (case channels ((3) gl:+rgb+) ((4) gl:+rgba+))))
     (assert (or (= channels 3) (= channels 4)))
@@ -120,4 +120,5 @@
   (let* ((size (file-size filename)) (buf (make-u8vector size 0 #t #f)))
     (with-input-from-file
       filename
-      (lambda () (read-u8vector! size buf) (u8vector->blob/shared buf)))))
+      (lambda () (read-u8vector! size buf) (u8vector->blob/shared buf))
+      #:binary)))
